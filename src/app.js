@@ -50,6 +50,18 @@ export function createScene(scene) {
     mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
     scene.add(mesh);
   }
+
+  //   const building1Texture = new MeshPhongMaterial({
+  //     map: this.getTexture("building_1"),
+  //     specular: 0xffffff,
+  //     specularMap: this.getTexture("building_1_rough"),
+  //     envMap: this.getTexture("env_night"),
+  //     emissive: new Color("hsl(" + Math.random() * 360 + ", 100%, 95%)"),
+  //     emissiveMap: this.getTexture("building_1_em"),
+  //     emissiveIntensity: this.buildingWindowsEmissiveIntensity,
+  //     bumpMap: this.getTexture("building_1"),
+  //     bumpScale: 5,
+  //   });
 }
 
 export function createLights(scene, THREE) {

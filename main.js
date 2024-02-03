@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import {
@@ -25,6 +28,62 @@ function main() {
   createScene(scene, THREE);
   createLights(scene, THREE);
 
+  const textures = [];
+
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load("assets/textures/building_01.jpg", () => {
+    // Update any render or animation logic here if necessary
+    console.log("Texture loaded");
+    textures.push(texture);
+    console.log("textures: ", textures);
+  });
+  const texture2 = textureLoader.load("assets/textures/building_02.jpg", () => {
+    // Update any render or animation logic here if necessary
+    console.log("Texture loaded");
+    textures.push(texture);
+    console.log("textures: ", textures);
+  });
+
+  const loader = new GLTFLoader();
+
+  loader.load(
+    "assets/models/s_01_01.gltf",
+    (mesh) => {
+      mesh.scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material.map = texture;
+        }
+      });
+      console.log("gltf.scene: ", mesh.scene);
+      mesh.scene.scale.set(0.03, 0.03, 0.03);
+      mesh.scene.position.set(-2, 0, 0);
+      scene.add(mesh.scene);
+    },
+    undefined,
+    (error) => {
+      console.error(error);
+    }
+  );
+
+  loader.load(
+    "assets/models/s_01_02.gltf",
+    (mesh) => {
+      mesh.scene.traverse((child) => {
+        if (child.isMesh) {
+          child.material.map = texture2;
+        }
+      });
+      console.log("gltf.scene: ", mesh.scene);
+      mesh.scene.scale.set(0.03, 0.03, 0.03);
+      mesh.scene.position.set(-4, 0, 3);
+      scene.add(mesh.scene);
+    },
+    undefined,
+    (error) => {
+      console.error(error);
+    }
+  );
+
   // Add coordinate helper overlays
   const gridHelper = new THREE.GridHelper(10, 10);
   scene.add(gridHelper);
@@ -37,29 +96,10 @@ function main() {
   controls.target.set(0, 0, 0);
   controls.update();
 
-  // const cube1 = new Cube("red", { x: 1, y: 4, z: 1 }, { x: 0, y: 2, z: -10 });
-  // const sphere1 = new Sphere("blue", 1);
-
-  // scene.add(cube1.mesh);
-  // scene.add(sphere1.mesh);
-  // renderer.render(scene, camera);
-
-  // MESHES
-
-  // function handleMouseMove(event) {
-  //   const moveDistance = 0.01;
-  //   if (event.movementX) camera.rotation.y -= event.movementX * moveDistance;
-  //   if (event.movementY) camera.rotation.x -= event.movementY * moveDistance;
-  //   renderer.render(scene, camera); // Render the scene with updated camera rotation
-  // }
-
-  // document.addEventListener("mousemove", handleMouseMove);
-
   document.addEventListener("keydown", handleKeyboardInput);
   document.addEventListener("keyup", handleKeyboardRelease);
 
   playerCamera(camera, scene, renderer);
-  // renderer.render(scene, camera); // Render the scene with updated camera position
 }
 
 main();
