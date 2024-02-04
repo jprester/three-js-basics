@@ -1,12 +1,3 @@
-import * as THREE from "three";
-
-export const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;

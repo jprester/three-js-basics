@@ -1,6 +1,60 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-export function createScene(scene) {
+import {
+  initCamera,
+  handleKeyboardInput,
+  handleKeyboardRelease,
+  playerCamera,
+} from "./utils/helpers";
+
+// Init Canvas, Scene, Renderer, Camera..
+const canvas = document.querySelector("#app");
+const scene = new THREE.Scene();
+export const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+export function initScene() {
+  // Set up your scene, camera, renderer, lights, etc.
+  console.log("Initializing scene");
+
+  initCamera(camera);
+  addObjectsToScene(scene, THREE);
+  addLightsToScene(scene, THREE);
+
+  // Add coordinate helper overlays
+  const gridHelper = new THREE.GridHelper(10, 10);
+  scene.add(gridHelper);
+
+  const axisHelper = new THREE.AxesHelper(5);
+  scene.add(axisHelper);
+
+  // Controls for viewing the scene
+  const controls = new OrbitControls(camera, canvas);
+  controls.target.set(0, 0, 0);
+  controls.update();
+
+  document.addEventListener("keydown", handleKeyboardInput);
+  document.addEventListener("keyup", handleKeyboardRelease);
+
+  playerCamera(camera, scene, renderer);
+}
+
+export function animate() {
+  requestAnimationFrame(animate);
+  // Update your scene
+  renderer.render(scene, camera);
+}
+
+export function addObjectsToScene(scene) {
   // Floor Plane
   {
     const planeSize = 40;
@@ -32,7 +86,7 @@ export function createScene(scene) {
     const cubeMat = new THREE.MeshPhongMaterial({ color: "#8AC" });
     const mesh = new THREE.Mesh(cubeGeo, cubeMat);
     mesh.position.set(cubeSize + 1, cubeSize / 2, 0);
-    scene.add(mesh);
+    // scene.add(mesh);
   }
 
   // Sphere
@@ -48,7 +102,7 @@ export function createScene(scene) {
     const sphereMat = new THREE.MeshPhongMaterial({ color: "#CA8" });
     const mesh = new THREE.Mesh(sphereGeo, sphereMat);
     mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
-    scene.add(mesh);
+    // scene.add(mesh);
   }
 
   //   const building1Texture = new MeshPhongMaterial({
@@ -64,7 +118,7 @@ export function createScene(scene) {
   //   });
 }
 
-export function createLights(scene, THREE) {
+export function addLightsToScene(scene, THREE) {
   // Lights
   {
     const color = 0xffffff;
