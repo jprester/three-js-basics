@@ -29,13 +29,7 @@ export function initScene() {
   initCamera(camera);
   addObjectsToScene(scene, THREE);
   addLightsToScene(scene, THREE);
-
-  // Add coordinate helper overlays
-  const gridHelper = new THREE.GridHelper(10, 10);
-  scene.add(gridHelper);
-
-  const axisHelper = new THREE.AxesHelper(5);
-  scene.add(axisHelper);
+  addHelpersToScene(scene, THREE);
 
   // Controls for viewing the scene
   const controls = new OrbitControls(camera, canvas);
@@ -54,7 +48,7 @@ export function animate() {
   renderer.render(scene, camera);
 }
 
-export function addObjectsToScene(scene) {
+const addObjectsToScene = (scene) => {
   // Floor Plane
   {
     const planeSize = 40;
@@ -116,9 +110,9 @@ export function addObjectsToScene(scene) {
   //     bumpMap: this.getTexture("building_1"),
   //     bumpScale: 5,
   //   });
-}
+};
 
-export function addLightsToScene(scene, THREE) {
+const addLightsToScene = (scene) => {
   // Lights
   {
     const color = 0xffffff;
@@ -155,4 +149,13 @@ export function addLightsToScene(scene, THREE) {
     lightSphereMesh.position.copy(light.position);
     scene.add(lightSphereMesh);
   }
-}
+};
+
+const addHelpersToScene = (scene) => {
+  // Add coordinate helper overlays
+  const gridHelper = new THREE.GridHelper(10, 10);
+  scene.add(gridHelper);
+
+  const axisHelper = new THREE.AxesHelper(5);
+  scene.add(axisHelper);
+};

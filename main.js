@@ -6,7 +6,9 @@ const assetManager = new AssetManager();
 document.getElementById("loading").style.display = "block";
 
 try {
-  await assetManager.loadAssets();
+  const assets = await assetManager.loadAssets();
+
+  console.log("Assets loaded:", assets);
 
   document.getElementById("loading").style.display = "none";
   initScene();
