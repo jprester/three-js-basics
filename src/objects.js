@@ -60,3 +60,33 @@ export class Rectangle {
     this.mesh.position.x = position;
   }
 }
+
+export class Building {
+  constructor(model, texture) {
+    this.model = model;
+    this.texture = texture;
+
+    this.model.scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material.map = this.texture;
+        child.material.needsUpdate = true;
+      }
+    });
+  }
+
+  changePosition(
+    positionx = this.model.scene.position.x,
+    positiony = this.model.scene.position.y,
+    positionz = this.model.scene.position.z
+  ) {
+    this.model.scene.position.x = positionx;
+    this.model.scene.position.y = positiony;
+    this.model.scene.position.z = positionz;
+  }
+
+  changeScale(scalex, scaley, scalez) {
+    this.model.scale.x = scalex;
+    this.model.scale.y = scaley;
+    this.model.scale.z = scalez;
+  }
+}

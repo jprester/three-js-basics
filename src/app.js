@@ -1,5 +1,7 @@
 import * as THREE from "three";
+
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Building } from "./objects";
 
 import {
   initCamera,
@@ -22,14 +24,14 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-export function initScene() {
+export function initScene(assets) {
   // Set up your scene, camera, renderer, lights, etc.
-  console.log("Initializing scene");
+  console.log("Initializing scene: ", assets);
 
   initCamera(camera);
-  addObjectsToScene(scene, THREE);
-  addLightsToScene(scene, THREE);
-  addHelpersToScene(scene, THREE);
+  addObjectsToScene(scene, assets);
+  addLightsToScene(scene);
+  addHelpersToScene(scene);
 
   // Controls for viewing the scene
   const controls = new OrbitControls(camera, canvas);
@@ -48,7 +50,7 @@ export function animate() {
   renderer.render(scene, camera);
 }
 
-const addObjectsToScene = (scene) => {
+const addObjectsToScene = (scene, assets) => {
   // Floor Plane
   {
     const planeSize = 40;
@@ -57,6 +59,7 @@ const addObjectsToScene = (scene) => {
     const texture = loader.load(
       "https://threejs.org/manual/examples/resources/images/checker.png"
     );
+
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.magFilter = THREE.NearestFilter;
@@ -73,43 +76,28 @@ const addObjectsToScene = (scene) => {
     scene.add(mesh);
   }
 
-  // Cube
-  {
-    const cubeSize = 2;
-    const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-    const cubeMat = new THREE.MeshPhongMaterial({ color: "#8AC" });
-    const mesh = new THREE.Mesh(cubeGeo, cubeMat);
-    mesh.position.set(cubeSize + 1, cubeSize / 2, 0);
-    // scene.add(mesh);
-  }
+  console.log("Assets: ", assets);
+  console.log("asset model: ", assets.models.get("building_01"));
 
-  // Sphere
-  {
-    const sphereRadius = 1;
-    const sphereWidthDivisions = 32;
-    const sphereHeightDivisions = 16;
-    const sphereGeo = new THREE.SphereGeometry(
-      sphereRadius,
-      sphereWidthDivisions,
-      sphereHeightDivisions
-    );
-    const sphereMat = new THREE.MeshPhongMaterial({ color: "#CA8" });
-    const mesh = new THREE.Mesh(sphereGeo, sphereMat);
-    mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
-    // scene.add(mesh);
-  }
+  // Building 1
+  const building1 = new Building(
+    assets.models.get("building_01")?.data,
+    assets.textures.get("building_01")?.data
+  );
 
-  //   const building1Texture = new MeshPhongMaterial({
-  //     map: this.getTexture("building_1"),
-  //     specular: 0xffffff,
-  //     specularMap: this.getTexture("building_1_rough"),
-  //     envMap: this.getTexture("env_night"),
-  //     emissive: new Color("hsl(" + Math.random() * 360 + ", 100%, 95%)"),
-  //     emissiveMap: this.getTexture("building_1_em"),
-  //     emissiveIntensity: this.buildingWindowsEmissiveIntensity,
-  //     bumpMap: this.getTexture("building_1"),
-  //     bumpScale: 5,
-  //   });
+  building1.model.scene.scale.set(0.04, 0.04, 0.04);
+  building1.model.scene.position.set(-1, 0, 0.5);
+  scene.add(building1.model.scene);
+
+  // Building 2
+  const building2 = new Building(
+    assets.models.get("building_02")?.data,
+    assets.textures.get("building_02")?.data
+  );
+
+  building2.model.scene.scale.set(0.04, 0.04, 0.04);
+  building2.model.scene.position.set(3.5, 0, 0.5);
+  scene.add(building2.model.scene);
 };
 
 const addLightsToScene = (scene) => {
@@ -118,7 +106,7 @@ const addLightsToScene = (scene) => {
     const color = 0xffffff;
     const intensity = 1;
     const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(3, 2, 4);
+    light.position.set(-1, 2, 4);
     scene.add(light);
 
     // Create a sphere mesh to represent the light position
