@@ -62,16 +62,53 @@ export class Rectangle {
 }
 
 export class Building {
-  constructor(model, texture) {
+  constructor(model, textures = {}, options = {}) {
     this.model = model;
-    this.texture = texture;
+    // this.model.computeBoundsTree();
+    this.textures = textures;
 
-    this.model.scene.traverse((child) => {
-      if (child.isMesh) {
-        child.material.map = this.texture;
-        child.material.needsUpdate = true;
-      }
-    });
+    const buildingTexture = this.textures.texture;
+
+    buildingTexture.wrapS = THREE.RepeatWrapping;
+    buildingTexture.wrapT = THREE.RepeatWrapping;
+    buildingTexture.anisotropy = options?.anisotropy || 8;
+
+    const buildingTextureRough = this.textures.rough;
+
+    buildingTextureRough.wrapS = THREE.RepeatWrapping;
+    buildingTextureRough.wrapT = THREE.RepeatWrapping;
+    buildingTextureRough.anisotropy = options?.anisotropy || 8;
+
+    const buildingTextureEm = this.textures.em;
+
+    buildingTextureEm.wrapS = THREE.RepeatWrapping;
+    buildingTextureEm.wrapT = THREE.RepeatWrapping;
+    buildingTextureEm.anisotropy = options?.anisotropy || 8;
+
+    const buildingTextureSpec = this.textures.spec;
+
+    buildingTextureSpec.wrapS = THREE.RepeatWrapping;
+    buildingTextureSpec.wrapT = THREE.RepeatWrapping;
+    buildingTextureSpec.anisotropy = options?.anisotropy || 8;
+
+    const buildingMesh = new THREE.Mesh(
+      this.model,
+      new THREE.MeshPhongMaterial({
+        map: buildingTexture,
+        specular: options?.specular || 0xffffff,
+        specularMap: buildingTextureRough,
+        envMap: this.textures.env,
+        emissive:
+          options.emissiveColor ||
+          new THREE.Color("hsl(" + Math.random() * 360 + ", 100%, 95%)"),
+        emissiveMap: buildingTextureEm,
+        emissiveIntensity: options.emissiveIntensity || 1.5,
+        bumpMap: buildingTexture,
+        bumpScale: 5,
+      })
+    );
+
+    return buildingMesh;
   }
 
   changePosition(
